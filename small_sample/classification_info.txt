@@ -1,0 +1,45 @@
+IDs (stellar mass)
+12608 (10.0)
+14832 (9.3)
+15645 (9.6)
+19741 (9.4)
+19750 (9.6)
+20759 (9.9)
+21420 (10.4)
+21566 (10.3)
+21839 (9.1)
+21980 (9.8)
+23120 (9.2)
+23420 (9.1)
+23533 (9.5)
+23820 (9.7)
+24433 (10.8)
+28204 (9.5)
+29179 (9.1)
+29362 (9.8)
+29700 (9.4)
+30110 (9.4)
+30258 (10.1)
+30273 (10.1)
+30859 (9.0)
+31085 (9.0)
+35511 (9.7)
+36403 (10.0)
+37475 (9.2)
+38624 (9.2)
+39147 (10.5)
+40467 (9.8)
+
+Here are the rest-frame V band redshifts:
+
+F115W: 0.9-1.27
+F150W: 1.45-2
+F200W: 2.27-3
+F277W: 3.36-4.64
+F356W: 4.82-6.1
+F410M: 6.1-6.82
+F444W: 6.1-8.1
+
+What this means is, for example we are looking at a galaxy with redshift 3.6, we will want to focus on the F277W filter the most when we are determining the galaxy type. You should have all of open on ds9 but mainly focus on the one filter. Since these galaxies are only between 3<z<6, then we will looking mainly at F277W and F356W to make our classifications.
+
+Here is the link the CEERS website: https://ceers.github.io
