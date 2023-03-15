@@ -1,6 +1,0 @@
-sig_fract = 5.0
-percent_fract = 0.01
-i_scale = 6.8
-dpi = 300
-color = pylab.cm.Greys
-data_folder = 'small_sample'

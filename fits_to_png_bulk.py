@@ -230,13 +230,13 @@ def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode,
 		axes[i].imshow(new_img, interpolation='nearest', origin='lower', cmap=color)
 		
 		if restframe == filters[i]:
-			axes[8].set_title(str(9) + ') ' + filters[i])
+			axes[8].set_title('Rest Frame) ' + filters[i])
 			axes[8].axis('off')
 			axes[8].imshow(new_img, interpolation='nearest', origin='lower', cmap=color)
 			
 	r = fn_list[6]
 	g = fn_list[4]
-	b = fn_list[0]
+	b = fn_list[1]
 	
 	rgb_array = get_rgb((r,g,b), min_val=min_val)
 	
@@ -248,17 +248,21 @@ def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode,
 	pylab.savefig(folder_name + '_collage/' + mode + '/ceers_' + fn_list[0][-10:-5] + '_' + mode + '.png', dpi=(dpi))
 	pylab.close('all')
 
-def get_rgb(channel_list, sig_fract=3.0, percent_fract=5.0-4, min_val=None):
+def get_rgb(channel_list, sig_fract=3.0, percent_fract=5.0-4, min_val=None, color_balance=(1,1,1)):
 	img_data_r = get_fits_data(channel_list[0], sig_fract, percent_fract)
 	img_data_g = get_fits_data(channel_list[1], sig_fract, percent_fract)
 	img_data_b = get_fits_data(channel_list[2], sig_fract, percent_fract)
 	
 	rgb_array = numpy.empty((img_data_r[2],img_data_r[3],3), dtype=float)
 	
-	r = img_scale.asinh(img_data_r[0], scale_min = min_val, non_linear=0.005)
-	g = img_scale.asinh(img_data_g[0], scale_min = min_val, non_linear=0.005)
-	b = img_scale.asinh(img_data_b[0], scale_min = min_val, non_linear=0.005)
-	
+	r = img_scale.asinh(img_data_r[0] * color_balance[0], scale_min = min_val, non_linear=0.005)
+	g = img_scale.asinh(img_data_g[0] * color_balance[1], scale_min = min_val, non_linear=0.005)
+	b = img_scale.asinh(img_data_b[0] * color_balance[2], scale_min = min_val, non_linear=0.005)
+	"""
+	r = img_scale.log(img_data_r[1], scale_min = min_val)
+	g = img_scale.log(img_data_g[1], scale_min = min_val)
+	b = img_scale.log(img_data_b[1], scale_min = min_val)
+	"""
 	rgb_array[:,:,0] = r
 	rgb_array[:,:,1] = g
 	rgb_array[:,:,2] = b
@@ -278,7 +282,8 @@ def save_collage_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_frac
 	for r, d, f in os.walk(thisdir):
 		for file in f:
 			if file.endswith(".fits"):
-				fn_list.append(path_to_info(os.path.join(r, file), folder_fn))
+				if path_to_info(os.path.join(r, file), folder_fn) not in fn_list:
+					fn_list.append(path_to_info(os.path.join(r, file), folder_fn))
 	
 	file_ids_unique = []
 	for i in fn_list:
@@ -293,6 +298,113 @@ def save_collage_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_frac
 				for filt in filter_list:
 					files.append(folder_fn + '/' + filt + '/ceers_' + filt + '_' + f_id + '.fits')
 				img_scale_collage(files, sig_fract, percent_fract, 0.0, filter_list, mode, folder_fn, color=color, size_inches=size_inches, dpi=dpi, restframe=restframes[f_id])
+				bar()
+
+def collage_rgb_comparison(fn_list, sig_fract, percent_fract, min_val, filters, mode, folder_name, color=pylab.cm.hot, size_inches=3.4, dpi=300, restframe=None):
+	"""Save a collage .png image of the fits data for each filter..
+	
+	@type fn: list
+	@param fn: list of file name strings
+	@type sig_fract: float
+	@param sig_fract: fraction of sigma clipping
+	@type percent_fract: float
+	@param percent_fract: convergence fraction
+	@type min_val: float
+	@param min_val: minimum data value
+	@type filters: list
+	@param filters: list of filter name strings
+	@type mode: string
+	@param mode: method of scaling
+	@type folder_name: string
+	@param folder_name: name of folder which contains filter folders with desired data
+	@type color: matplotlib colormap
+	@param color: colormap to use for saved image
+	@type size_inches: float
+	@param size_inches: size of output image
+	@type dpi: integer
+	@param dpi: dots per inch of output image
+	@rtype: None
+	@return: saves a pyplot figure as .png
+	
+	"""
+	fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = pylab.subplots(2, 3)
+	fig.set_size_inches(size_inches, size_inches)
+	
+	axes = [ax1, ax2, ax3, ax4, ax5, ax6]
+			
+	r = fn_list[6]
+	g = fn_list[4]
+	b = fn_list[1]
+	
+	cb1 = (1,1,1)
+	cb2 = (1,1.5,3)
+	cb3 = (1,3,5)
+	
+	rChannel = img_scale_getfig(r, sig_fract, percent_fract, mode, min_val = min_val)
+	gChannel = img_scale_getfig(g, sig_fract, percent_fract, mode, min_val = min_val)
+	bChannel = img_scale_getfig(b, sig_fract, percent_fract, mode, min_val = min_val)
+	
+	rgb_array1 = get_rgb((r,g,b), min_val=min_val, color_balance=cb1)
+	rgb_array2 = get_rgb((r,g,b), min_val=min_val, color_balance=cb2)
+	rgb_array3 = get_rgb((r,g,b), min_val=min_val, color_balance=cb3)
+	
+	axes[0].set_title('Red: f444w')
+	axes[0].axis('off')
+	axes[0].imshow(rChannel, interpolation='nearest', origin='lower', cmap=color)
+	
+	axes[1].set_title('Green: f356w')
+	axes[1].axis('off')
+	axes[1].imshow(gChannel, interpolation='nearest', origin='lower', cmap=color)
+	
+	axes[2].set_title('Blue: f150w')
+	axes[2].axis('off')
+	axes[2].imshow(bChannel, interpolation='nearest', origin='lower', cmap=color)
+	
+	axes[3].set_title(str(cb1))
+	axes[3].axis('off')
+	axes[3].imshow(rgb_array1, interpolation='nearest', origin='lower')
+	
+	axes[4].set_title(str(cb2))
+	axes[4].axis('off')
+	axes[4].imshow(rgb_array2, interpolation='nearest', origin='lower')
+	
+	axes[5].set_title(str(cb3))
+	axes[5].axis('off')
+	axes[5].imshow(rgb_array3, interpolation='nearest', origin='lower')
+	
+	pylab.suptitle('ceers_' + fn_list[0][-10:-5])
+	pylab.savefig(folder_name + '_RGBComp/' + mode + '/ceers_' + fn_list[0][-10:-5] + '_' + mode + '.png', dpi=(dpi))
+	pylab.close('all')
+
+def save_comparison_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_fract, restframes, color=pylab.cm.hot, size_inches=3.4, dpi=300):
+	"""Get all .fits files in a given folder
+	
+	"""
+	
+	# Getting the current work directory (cwd)
+	thisdir = os.getcwd()
+	fn_list = []
+
+	# r=root, d=directories, f = files
+	for r, d, f in os.walk(thisdir):
+		for file in f:
+			if file.endswith(".fits"):
+				if path_to_info(os.path.join(r, file), folder_fn) not in fn_list:
+					fn_list.append(path_to_info(os.path.join(r, file), folder_fn))
+	
+	file_ids_unique = []
+	for i in fn_list:
+		if i[1][-5:] not in file_ids_unique:
+			file_ids_unique.append(i[1][-5:])
+	
+	with alive_bar(len(file_ids_unique) * len(mode_list), title='Total Progress') as bar:
+		for index, mode in enumerate(mode_list):
+			print('Processing: ' + mode)
+			for f_id in file_ids_unique:
+				files = []
+				for filt in filter_list:
+					files.append(folder_fn + '/' + filt + '/ceers_' + filt + '_' + f_id + '.fits')
+				collage_rgb_comparison(files, sig_fract, percent_fract, 0.0, filter_list, mode, folder_fn, color=color, size_inches=size_inches, dpi=dpi, restframe=restframes[f_id])
 				bar()
 
 def main():
@@ -324,7 +436,7 @@ def main():
 			'f410m',
 			'f444w',]
 
-	save_collage_bulk(data_folder, scale_modes[8:], filter_list, sig_fract, percent_fract, restframes, color=color, size_inches=i_scale, dpi=dpi)
+	save_comparison_bulk(data_folder, scale_modes[3:4], filter_list, sig_fract, percent_fract, restframes, color=color, size_inches=i_scale, dpi=dpi)
 	
 if __name__ == "__main__":
 	main()
