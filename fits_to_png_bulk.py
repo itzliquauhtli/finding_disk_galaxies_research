@@ -348,27 +348,29 @@ def collage_rgb_comparison(fn_list, sig_fract, percent_fract, min_val, filters, 
 	rgb_array2 = get_rgb((r,g,b), min_val=min_val, color_balance=cb2)
 	rgb_array3 = get_rgb((r,g,b), min_val=min_val, color_balance=cb3)
 	
-	axes[0].set_title('Red: f444w')
+	fs = 7
+	
+	axes[0].set_title('Red: f444w', fontsize=fs)
 	axes[0].axis('off')
 	axes[0].imshow(rChannel, interpolation='nearest', origin='lower', cmap=color)
 	
-	axes[1].set_title('Green: f356w')
+	axes[1].set_title('Green: f356w', fontsize=fs)
 	axes[1].axis('off')
 	axes[1].imshow(gChannel, interpolation='nearest', origin='lower', cmap=color)
 	
-	axes[2].set_title('Blue: f150w')
+	axes[2].set_title('Blue: f150w', fontsize=fs)
 	axes[2].axis('off')
 	axes[2].imshow(bChannel, interpolation='nearest', origin='lower', cmap=color)
 	
-	axes[3].set_title(str(cb1))
+	axes[3].set_title(str(cb1), fontsize=fs)
 	axes[3].axis('off')
 	axes[3].imshow(rgb_array1, interpolation='nearest', origin='lower')
 	
-	axes[4].set_title(str(cb2))
+	axes[4].set_title(str(cb2), fontsize=fs)
 	axes[4].axis('off')
 	axes[4].imshow(rgb_array2, interpolation='nearest', origin='lower')
 	
-	axes[5].set_title(str(cb3))
+	axes[5].set_title(str(cb3), fontsize=fs)
 	axes[5].axis('off')
 	axes[5].imshow(rgb_array3, interpolation='nearest', origin='lower')
 	
@@ -410,7 +412,7 @@ def save_comparison_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_f
 def main():
 	sig_fract = 5.0
 	percent_fract = 0.01
-	i_scale = 6.8
+	i_scale = 3.4
 	dpi = 300
 	color = pylab.cm.Greys
 	restframes = get_restframe_dict('restframe.csv')
