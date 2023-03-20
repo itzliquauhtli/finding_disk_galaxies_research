@@ -22,7 +22,7 @@ Code for generating images from FITS data for use in a public galaxy categorizat
 
   - Folder contains test images containing the R, G, and B channels of the RGB composition, and then 3 RGB comps with different scaling methods for the channels.
 
-![The comparison of different channel scaling for sample 24433. It is a two by three grid of square images. The first row is 3 grayscale images of filters, labeled left to right as 'Red: f444w', 'Green: f356w', and 'Blue: f150w'. The bottom row is three RGB composites of the top row. They are labeled according to the scaling factor of each channel, with the format (Red Scale, Green Scale, Blue Scale). From left to right, they read (1,1,1), (1,1.5,3), and (1,3,5).](/small_sample_RGBComp/Scale Inside/ceers_24433_linear.png)
+![The comparison of different channel scaling for sample 24433. It is a two by three grid of square images. The first row is 3 grayscale images of filters, labeled left to right as 'Red: f444w', 'Green: f356w', and 'Blue: f150w'. The bottom row is three RGB composites of the top row. They are labeled according to the scaling factor of each channel, with the format (Red Scale, Green Scale, Blue Scale). From left to right, they read (1,1,1), (1,1.5,3), and (1,3,5).](/small_sample_RGBComp/Scale%20Inside/ceers_24433_linear.png)
   
 ### Loose Files
 
