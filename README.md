@@ -1,6 +1,6 @@
 # finding_disk_galaxies_research
 
-Code for generating images from FITS data for use in a public galaxy categorization effort. Adapted by Dylan Bateman, Undergraduate studying Physics at the University of Missouri, from code made available by Min-Su Shin at https://astromsshin.github.io/science/code/Python_fits_image/index.html.
+Code for generating images from FITS data for use in a public galaxy categorization effort. Adapted by Dylan Bateman, Undergraduate studying Physics at the University of Missouri, from code made available by Min-Su Shin at his page, [Python code to convert FITS files to images (including the OpenEXR format)](https://astromsshin.github.io/science/code/Python_fits_image/index.html).
 
 ### small_sample
 

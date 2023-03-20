@@ -187,6 +187,7 @@ def img_scale_savefig(new_img, fn, filt, folder_fn, mode, color=pylab.cm.hot, si
 	
 	pylab.imshow(new_img, interpolation='nearest', origin='lower', cmap=color)
 	pylab.axis('off')
+	pylab.tight_layout()
 	pylab.savefig(folder_fn + '_converted/' + mode + '/' + filt + '/' + fn + '_' + mode + '.png', dpi=(dpi))
 	pylab.clf()
 
@@ -249,6 +250,22 @@ def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode,
 	pylab.close('all')
 
 def get_rgb(channel_list, sig_fract=3.0, percent_fract=5.0-4, min_val=None, color_balance=(1,1,1)):
+	"""Get RGB Image Data from 3 Channels
+	
+	@type channel_list: list
+	@param channel_list: list of file name strings
+	@type sig_fract: float
+	@param sig_fract: fraction of sigma clipping
+	@type percent_fract: float
+	@param percent_fract: convergence fraction
+	@type min_val: float
+	@param min_val: minimum data value
+	@type color_balance: tuple
+	@param color_balance: scaling factor for each channel
+	@rtype: numpy array
+	@return: RGB array ready for insertion into a matplotlib figure
+	
+	"""
 	img_data_r = get_fits_data(channel_list[0], sig_fract, percent_fract)
 	img_data_g = get_fits_data(channel_list[1], sig_fract, percent_fract)
 	img_data_b = get_fits_data(channel_list[2], sig_fract, percent_fract)
@@ -259,9 +276,9 @@ def get_rgb(channel_list, sig_fract=3.0, percent_fract=5.0-4, min_val=None, colo
 	g = img_scale.asinh(img_data_g[0] * color_balance[1], scale_min = min_val, non_linear=0.005)
 	b = img_scale.asinh(img_data_b[0] * color_balance[2], scale_min = min_val, non_linear=0.005)
 	"""
-	r = img_scale.log(img_data_r[1], scale_min = min_val)
-	g = img_scale.log(img_data_g[1], scale_min = min_val)
-	b = img_scale.log(img_data_b[1], scale_min = min_val)
+	r = img_scale.log(img_data_r[0] * color_balance[0], scale_min = min_val)
+	g = img_scale.log(img_data_g[0] * color_balance[1], scale_min = min_val)
+	b = img_scale.log(img_data_b[0] * color_balance[2], scale_min = min_val)
 	"""
 	rgb_array[:,:,0] = r
 	rgb_array[:,:,1] = g
@@ -272,6 +289,27 @@ def get_rgb(channel_list, sig_fract=3.0, percent_fract=5.0-4, min_val=None, colo
 def save_collage_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_fract, restframes, color=pylab.cm.hot, size_inches=3.4, dpi=300):
 	"""Get all .fits files in a given folder
 	
+	@type folder_fn: 
+	@param folder_fn: 
+	@type mode_list: 
+	@param mode_list: 
+	@type filter_list: 
+	@param filter_list: 
+	@type sig_fract: float
+	@param sig_fract: fraction of sigma clipping
+	@type percent_fract: float
+	@param percent_fract: convergence fraction
+	@type restframes: dictionary
+	@param restframes: dictionary where the key is the ID of a particular sample, and the value is the rest frame filter
+	@type color: matplotlib colormap
+	@param color: colormap to use for saved image
+	@type size_inches: float
+	@param size_inches: size of output image
+	@type dpi: integer
+	@param dpi: dots per inch of output image
+	@rtype: None
+	@return: saves a pyplot figure as .png
+	
 	"""
 	
 	# Getting the current work directory (cwd)
@@ -281,7 +319,7 @@ def save_collage_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_frac
 	# r=root, d=directories, f = files
 	for r, d, f in os.walk(thisdir):
 		for file in f:
-			if file.endswith(".fits"):
+			if file.endswith(".fits") and (folder_fn in r):
 				if path_to_info(os.path.join(r, file), folder_fn) not in fn_list:
 					fn_list.append(path_to_info(os.path.join(r, file), folder_fn))
 	
@@ -381,6 +419,27 @@ def collage_rgb_comparison(fn_list, sig_fract, percent_fract, min_val, filters, 
 def save_comparison_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_fract, restframes, color=pylab.cm.hot, size_inches=3.4, dpi=300):
 	"""Get all .fits files in a given folder
 	
+	@type folder_fn: 
+	@param folder_fn: 
+	@type mode_list: 
+	@param mode_list: 
+	@type filter_list: 
+	@param filter_list: 
+	@type sig_fract: float
+	@param sig_fract: fraction of sigma clipping
+	@type percent_fract: float
+	@param percent_fract: convergence fraction
+	@type restframes: dictionary
+	@param restframes: dictionary where the key is the ID of a particular sample, and the value is the rest frame filter
+	@type color: matplotlib colormap
+	@param color: colormap to use for saved image
+	@type size_inches: float
+	@param size_inches: size of output image
+	@type dpi: integer
+	@param dpi: dots per inch of output image
+	@rtype: None
+	@return: saves a pyplot figure as .png
+	
 	"""
 	
 	# Getting the current work directory (cwd)
@@ -412,7 +471,7 @@ def save_comparison_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_f
 def main():
 	sig_fract = 5.0
 	percent_fract = 0.01
-	i_scale = 3.4
+	i_scale = 6.8
 	dpi = 300
 	color = pylab.cm.Greys
 	restframes = get_restframe_dict('restframe.csv')
@@ -438,7 +497,7 @@ def main():
 			'f410m',
 			'f444w',]
 
-	save_comparison_bulk(data_folder, scale_modes[3:4], filter_list, sig_fract, percent_fract, restframes, color=color, size_inches=i_scale, dpi=dpi)
+	save_collage_bulk(data_folder, scale_modes[3:4], filter_list, sig_fract, percent_fract, restframes, color=color, size_inches=i_scale, dpi=dpi)
 	
 if __name__ == "__main__":
 	main()
