@@ -2,6 +2,26 @@
 
 Code for generating images from FITS data for use in a public galaxy categorization effort. Adapted by Dylan Bateman, Undergraduate studying Physics at the University of Missouri, from code made available by Min-Su Shin at his page, [Python code to convert FITS files to images (including the OpenEXR format)](https://astromsshin.github.io/science/code/Python_fits_image/index.html).
 
+## Sample 2
+
+This dataset consists of 100 galaxies which are serving as a subset of the full dataset for our team to manually categorize to gather preliminary results before moving forward with all of the samples.
+
+### sample_2
+
+  - Folder containing raw FITS data
+
+### sample_2_collage
+
+  - Folder contains collages of each sample, containing each filter as well as an RGB composition and an extra panel showing the rest frame of the sample a second time.
+
+### sample_2_scaleComparison
+
+  - Folder contains a few select images from sample_2_collage, for comparing different scaling methods side by side. 
+
+## Small Sample
+
+This dataset consists of 30 galaxies which were used as a test set for the initial development of this codebase as well as the accompanying Zooniverse project.
+
 ### small_sample
 
   - Folder containing raw FITS data, as well as information about the projects goals and methods by the project head, Vicky Kuhn.

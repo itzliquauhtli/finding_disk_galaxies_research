@@ -16,6 +16,7 @@ import os
 from alive_progress import alive_bar
 import time
 import csv
+import warnings
 
 def get_restframe_dict(filename):
 	"""Get rest filters from a csv file
@@ -37,25 +38,6 @@ def get_restframe_dict(filename):
 			except:
 				continue
 	return rframe_dict
-
-def make_path_individual(folder_fn, mode_list, filter_list):
-	"""Make folders which match my organization scheme if they don't exist
-	
-	@type folder_fn: string
-	@param folder_fn: name of folder which contains filter folders with desired data
-	@type mode_list: list
-	@param mode_list: list of scaling modes
-	@type filter_list: list
-	@param filter_list: list of filters
-	@rtype: None
-	
-	"""
-	fn = folder_fn + '_converted'
-	for mode in mode_list:
-		for filt in filter_list:
-			path = (fn, mode, filt).join('/')
-			if not os.path.exists(path):
-				os.makedirs(path)
 
 def make_path_collage(folder_fn, mode_list):
 	"""Make folders which match my organization scheme if they don't exist
@@ -185,13 +167,18 @@ def img_scale_savefig(new_img, fn, filt, folder_fn, mode, color=pylab.cm.hot, si
 	fig = pylab.gcf()
 	fig.set_size_inches(size_inches, size_inches)
 	
+	out_path = folder_fn + '_converted/' + mode + '/' + filt
+	
+	if not os.path.exists(out_path):
+		os.makedirs(out_path)
+	
 	pylab.imshow(new_img, interpolation='nearest', origin='lower', cmap=color)
 	pylab.axis('off')
 	pylab.tight_layout()
-	pylab.savefig(folder_fn + '_converted/' + mode + '/' + filt + '/' + fn + '_' + mode + '.png', dpi=(dpi))
+	pylab.savefig(out_path + '/' + fn + '_' + mode + '.png', dpi=(dpi))
 	pylab.clf()
 
-def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode, folder_name, color=pylab.cm.hot, size_inches=3.4, dpi=300, restframe=None):
+def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode, folder_fn, color=pylab.cm.hot, size_inches=3.4, dpi=300, restframe=None):
 	"""Save a collage .png image of the fits data for each filter..
 	
 	@type fn: list
@@ -206,8 +193,8 @@ def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode,
 	@param filters: list of filter name strings
 	@type mode: string
 	@param mode: method of scaling
-	@type folder_name: string
-	@param folder_name: name of folder which contains filter folders with desired data
+	@type folder_fn: string
+	@param folder_fn: name of folder which contains filter folders with desired data
 	@type color: matplotlib colormap
 	@param color: colormap to use for saved image
 	@type size_inches: float
@@ -245,8 +232,13 @@ def img_scale_collage(fn_list, sig_fract, percent_fract, min_val, filters, mode,
 	axes[7].axis('off')
 	axes[7].imshow(rgb_array, interpolation='nearest', origin='lower')
 	
+	out_path = folder_fn + '_collage/' + mode
+	
+	if not os.path.exists(out_path):
+		os.makedirs(out_path)
+	
 	pylab.suptitle('ceers_' + fn_list[0][-10:-5])
-	pylab.savefig(folder_name + '_collage/' + mode + '/ceers_' + fn_list[0][-10:-5] + '_' + mode + '.png', dpi=(dpi))
+	pylab.savefig(out_path + '/ceers_' + fn_list[0][-10:-5] + '_' + mode + '.png', dpi=(dpi))
 	pylab.close('all')
 
 def get_rgb(channel_list, sig_fract=3.0, percent_fract=5.0-4, min_val=None, color_balance=(1,1,1)):
@@ -332,10 +324,15 @@ def save_collage_bulk(folder_fn, mode_list, filter_list, sig_fract, percent_frac
 		for index, mode in enumerate(mode_list):
 			print('Processing: ' + mode)
 			for f_id in file_ids_unique:
-				files = []
-				for filt in filter_list:
-					files.append(folder_fn + '/' + filt + '/ceers_' + filt + '_' + f_id + '.fits')
-				img_scale_collage(files, sig_fract, percent_fract, 0.0, filter_list, mode, folder_fn, color=color, size_inches=size_inches, dpi=dpi, restframe=restframes[f_id])
+				with warnings.catch_warnings(record=True) as caught_warnings:
+					files = []
+					for filt in filter_list:
+						files.append(folder_fn + '/' + filt + '/ceers_' + filt + '_' + f_id + '.fits')
+					img_scale_collage(files, sig_fract, percent_fract, 0.0, filter_list, mode, folder_fn, color=color, size_inches=size_inches, dpi=dpi, restframe=restframes[f_id])
+					if caught_warnings:
+						print('Something happened on sample ' + f_id)
+						for warn in caught_warnings:
+							print(f"{warn.message}")
 				bar()
 
 def collage_rgb_comparison(fn_list, sig_fract, percent_fract, min_val, filters, mode, folder_name, color=pylab.cm.hot, size_inches=3.4, dpi=300, restframe=None):
@@ -474,10 +471,9 @@ def main():
 	i_scale = 6.8
 	dpi = 300
 	color = pylab.cm.Greys
-	restframes = get_restframe_dict('restframe.csv')
+	restframes = get_restframe_dict('sample_2/id_list.csv')
 
-	data_folder = 'small_sample'
-	path_length = -29 - len(data_folder)
+	data_folder = 'sample_2'
 
 	scale_modes = ['sqrt',
 			'power',
@@ -497,7 +493,7 @@ def main():
 			'f410m',
 			'f444w',]
 
-	save_collage_bulk(data_folder, scale_modes[3:4], filter_list, sig_fract, percent_fract, restframes, color=color, size_inches=i_scale, dpi=dpi)
+	save_collage_bulk(data_folder, scale_modes[8:9], filter_list, sig_fract, percent_fract, restframes, color=color, size_inches=i_scale, dpi=dpi)
 	
 if __name__ == "__main__":
 	main()
