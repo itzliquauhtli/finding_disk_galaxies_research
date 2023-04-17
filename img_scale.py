@@ -346,14 +346,15 @@ def log(inputArray, scale_min=None, scale_max=None):
 		scale_min = imageData.min()
 	if scale_max == None:
 		scale_max = imageData.max()
-	factor = math.log10(scale_max - scale_min)
+	a = 1000
+	factor = math.log10(a)
 	indices0 = numpy.where(imageData < scale_min)
 	indices1 = numpy.where((imageData >= scale_min) & (imageData <= scale_max))
 	indices2 = numpy.where(imageData > scale_max)
 	imageData[indices0] = 0.0
 	imageData[indices2] = 1.0
 	try :
-		imageData[indices1] = numpy.log10(imageData[indices1])/factor
+		imageData[indices1] = numpy.log10((imageData[indices1] * a) + 1)/factor
 	except :
 		print("Error on math.log10 for ", (imageData[i][j] - scale_min))
 
