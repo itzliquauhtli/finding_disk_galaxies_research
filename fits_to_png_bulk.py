@@ -125,7 +125,7 @@ def img_scale_getfig(fn, sig_fract, percent_fract, mode, min_val=None):
 	elif mode == 'power':
 		new_img = img_scale.power(img_data, power_index=3.0, scale_min = min_val)
 	elif mode == 'log':
-		new_img = img_scale.log(img_data_raw, scale_min = min_val)
+		new_img = img_scale.log(img_data_raw, scale_min = min_val, exponent = 1000)
 	elif mode == 'asinh_beta_01':
 		new_img = img_scale.asinh(img_data, scale_min = min_val, non_linear=0.01)
 	elif mode == 'asinh_beta_05':

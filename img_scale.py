@@ -325,7 +325,7 @@ def sqrt(inputArray, scale_min=None, scale_max=None):
 	return imageData
 
 
-def log(inputArray, scale_min=None, scale_max=None):
+def log(inputArray, scale_min=None, scale_max=None, exponent = 1000):
 	"""Performs log10 scaling of the input numpy array.
 
 	@type inputArray: numpy array
@@ -346,7 +346,7 @@ def log(inputArray, scale_min=None, scale_max=None):
 		scale_min = imageData.min()
 	if scale_max == None:
 		scale_max = imageData.max()
-	a = 1000
+	a = exponent
 	factor = math.log10(a)
 	indices0 = numpy.where(imageData < scale_min)
 	indices1 = numpy.where((imageData >= scale_min) & (imageData <= scale_max))
